@@ -244,9 +244,10 @@ function slot(bombP) {
 
 function spawnWave() {
   const d = run.d, t = run.time;
-  const bombP = t < 10 ? 0 : lerp(0.08, 0.3, d);
+  const bombP = t < 4 ? 0 : lerp(0.2, 0.5, d);
   const hasSpecial = ents.some((e) => e.special) || run.slowT > 0 || run.frenzyT > 0;
   const opts = [['single', 3], ['spread', 3 + d * 3], ['stagger', 2 + d * 2], ['cluster', 1.5 + d * 2]];
+  if (t > 8) opts.push(['barrage', 1 + d * 2]);
   if (t > 18) opts.push(['hatParade', 0.7]);
   if (t > 28) opts.push(['runway', 0.6]);
   if (t > 40 && d > 0.2) opts.push(['royal', 0.25]);
@@ -270,6 +271,8 @@ function spawnWave() {
       ids.sort((a, b) => tier(a) - tier(b));
       for (let i = 0; i < n; i++) { const x = lerp(W * 0.18, W * 0.82, i / (n - 1)); spawnBuddy(x, x, 0.26, { hat: ids[i] }); }
       popup(W / 2, H * 0.7, 'RUNWAY WALK', '#c586c0', 1); break; }
+    case 'barrage': { const n = randi(4, 6 + Math.round(d * 3)); for (let i = 0; i < n; i++) { const x = lerp(W * 0.12, W * 0.88, i / (n - 1)); after(i * 0.12, () => { if (state === 'play') spawnBomb(x, x + rand(-60, 60), rand(0.15, 0.38)); }); }
+      popup(W / 2, H * 0.7, 'BOMB BARRAGE', '#ff4d4d', 1); break; }
     case 'royal': spawnBuddy(W / 2, W / 2, 0.2, { hat: 'crown' }); spawnBomb(W / 2 - S * 0.9, W / 2 - S * 1.2, 0.24); spawnBomb(W / 2 + S * 0.9, W / 2 + S * 1.2, 0.24); break;
     case 'special': spawnBuddy(cx, cx + rand(-W * 0.2, W * 0.2), rand(0.15, 0.3), { special: Math.random() < 0.5 ? 'breakpoint' : 'agent', hat: false }); slot(bombP); break;
     case 'monolith': spawnBuddy(W / 2, W / 2, 0.3, { special: 'monolith', vr: 0 }); banner('LEGACY MONOLITH', 'mash it before it ships', '#ff8c3b', 1.3); break;
