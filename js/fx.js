@@ -142,6 +142,10 @@ function banner(title, sub = '', color = '#fff', dur = 1.3) {
   if (banners.length > 3) banners.shift();
 }
 function slashFx(x, y, a, len = 1.8) { flashes.push({ x, y, a, len: S * len, t: 0 }); }
+function screenSlash(a) {
+  const len = Math.hypot(W, H) / S;
+  for (const offset of [-0.18, 0, 0.18]) slashFx(W / 2, H / 2 + offset * H, a + offset, len);
+}
 function shock(x, y, color = '#fff', max = 2.2) { rings.push({ x, y, color, t: 0, max: S * max }); }
 function shake(v) { if (!reduceMotion) FX.shake = Math.max(FX.shake, v); }
 function flash(v, color = '#fff') { FX.flash = Math.max(FX.flash, reduceMotion ? v * 0.3 : v); FX.flashColor = color; }

@@ -52,6 +52,7 @@ function cutAlong(p, ax, ay, bx, by) {
     if (segDist(o.x, o.y, ax, ay, bx, by) > radiusOf(o)) continue;
     if (o.type === 'buddy') { sliceBuddy(o, a, state === 'play' ? p.grp : null); p.grp.last = performance.now(); }
     else if (o.type === 'bomb') { if (state === 'play' || state === 'menu') hitBomb(o); }
+    else if (o.type === 'killall') { hitKillall(o, a, p.grp); p.grp.last = performance.now(); }
     else if (o.type === 'hat') snipeHat(o, a);
   }
 }

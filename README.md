@@ -51,6 +51,7 @@ Hats you slice are saved to the Hat Rack. The equipped hat shows up 3× more oft
 - **Breakpoint** (red dot) slows time for 5 seconds.
 - **Agent** (sunglasses, purple) sends a 5-second flood of buddies from the sides.
 - **Legacy monolith** (giant, dizzy) freezes mid-air. Hit it up to 16 times before it ships.
+- **`killall`** (gold command chip) slashes every on-screen buddy, including specials and the Legacy monolith. Each cut earns normal points and hat rewards and joins your swipe combo; sliced Breakpoint and Agent buddies still activate their powers. Bombs and loose hats are untouched, so steer your blade clear of `rm -rf`. Available in both modes as a rare wave with three buddies, starting after 20 seconds, with at least 20 seconds between appearances and no spawning during another special or active power-up. Missing the chip costs no CI check.
 
 ## Controls
 
@@ -66,7 +67,7 @@ python3 -m http.server 8000
 
 Then open http://localhost:8000. Pushes to `main` deploy to GitHub Pages through [.github/workflows/pages.yml](.github/workflows/pages.yml).
 
-Run the difficulty regression tests with `node --test tests/difficulty.test.js`.
+Run the regression tests with `node --test tests/*.test.js`.
 
 ## Code
 
