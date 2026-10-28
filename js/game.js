@@ -155,7 +155,7 @@ function hitKillall(e, a, grp) {
   ents.splice(i, 1);
   // Snapshot only visible buddies; hats released by these cuts are not targets.
   const targets = ents.filter((b) => {
-    if (b.type !== 'buddy' || !b.entered) return false;
+    if (b.type !== 'buddy') return false;
     const r = radiusOf(b);
     return b.x + r >= 0 && b.x - r <= W && b.y + r >= TOP && b.y - r <= H;
   });

@@ -43,7 +43,7 @@ for (const mode of ['classic', 'arcade']) {
       const buddies = [visible(), visible({ x: 650 }), visible({ x: 600, hat: 'baseball-cap' })];
       const bomb = Object.assign(makeBomb(), { x: 100, y: 400, entered: true });
       const hat = makeLooseHat('crown', 700, 400, 0, 0);
-      const offscreen = [visible({ x: -S * 2 }), visible({ x: W + S * 2 }), visible({ y: TOP - S * 2 }), visible({ y: H + S * 2 }), visible({ entered: false })];
+      const offscreen = [visible({ x: -S * 2 }), visible({ x: W + S * 2 }), visible({ y: TOP - S * 2 }), visible({ y: H + S * 2 }), visible({ y: H + S * 2, entered: false })];
       ents.push(chip, ...buddies, bomb, hat, ...offscreen);
       cutAlong({ grp: group }, 350, 300, 450, 300);
     `);
@@ -87,6 +87,24 @@ test('killall includes sliceable buddies that are only partly on screen', () => 
   assert.equal(evaluate('ents.length'), 0);
   assert.equal(evaluate('run.stats.sliced'), 4);
 });
+
+for (const mode of ['classic', 'arcade']) {
+  test(`${mode}: killall slashes partially entering buddies before their centers cross the viewport`, () => {
+    const evaluate = createGame(mode);
+    evaluate(`
+      const rising = visible({ y: H + 10, vy: -S, g: G, entered: false });
+      ents.push(chip, rising);
+      updateEnts(0.01);
+    `);
+    assert.equal(evaluate('rising.entered'), false);
+    assert.ok(evaluate('rising.y > H && rising.y - radiusOf(rising) < H'));
+    evaluate('cutAlong({ grp: group }, 350, 300, 450, 300);');
+    assert.equal(evaluate('ents.includes(rising)'), false);
+    assert.equal(evaluate('run.stats.sliced'), 1);
+    assert.equal(evaluate('run.score'), 10);
+    assert.equal(evaluate('group.n'), 1);
+  });
+}
 
 test('ordinary monolith swipes still require repeated hits', () => {
   const evaluate = createGame();
