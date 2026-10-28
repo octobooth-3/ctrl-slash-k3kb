@@ -87,6 +87,10 @@ const Sfx = {
   breakpoint() { this.tone('sawtooth', 700, 70, 0.9, 0.14); this.tone('sine', 350, 40, 1.0, 0.25); },
   resume() { this.tone('sawtooth', 70, 700, 0.35, 0.1); },
   agent() { this.tone('square', 220, 1760, 0.5, 0.08); [880, 1109, 1319, 1760].forEach((f, i) => this.tone('triangle', f, f, 0.1, 0.1, 0.25 + i * 0.06)); },
+  killall() {
+    this.hiss(0.35, 0.3, 'highpass', 1200, 8000, 0.7);
+    [784, 1047, 1568, 2093].forEach((f, i) => this.tone('square', f, f * 1.01, 0.14, 0.09, i * 0.045));
+  },
   thunk(i) { this.tone('square', 110 + i * 22, 55, 0.09, 0.22); this.hiss(0.06, 0.2, 'bandpass', 900, 400, 2); },
   tick() { this.tone('square', 1320, 1320, 0.03, 0.05); },
   click() { this.tone('square', 660, 660, 0.03, 0.05); },

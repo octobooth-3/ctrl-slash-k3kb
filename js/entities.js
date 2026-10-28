@@ -1,7 +1,7 @@
 'use strict';
 /* entities.js — buddies, bombs, loose hats, sliced halves */
 
-const ents = [];    // live sliceables: buddy | bomb | hat
+const ents = [];    // live sliceables: buddy | bomb | hat | killall
 const halves = [];
 
 function pickHat(forceTier) {
@@ -24,6 +24,9 @@ function makeBuddy(o = {}) {
 }
 function makeBomb(o = {}) {
   return Object.assign({ type: 'bomb', x: 0, y: 0, vx: 0, vy: 0, rot: 0, vr: rand(-2.5, 2.5), scale: 1, t: 0, alive: true, entered: false, age: 0, fuseT: 0 }, o);
+}
+function makeKillall() {
+  return { type: 'killall', special: 'killall', x: 0, y: 0, vx: 0, vy: 0, rot: 0, vr: 0, scale: 1, t: 0, alive: true, entered: false, age: 0 };
 }
 function makeLooseHat(id, x, y, vx, vy) {
   return { type: 'hat', id, x, y, vx, vy, rot: 0, vr: rand(-7, 7) || 4, scale: 1, alive: true, entered: true, age: 0, t: 0 };
@@ -55,6 +58,7 @@ function radiusOf(e) {
   const touch = isCoarse ? 10 : 4;
   if (e.type === 'buddy') return (e.special === 'monolith' ? 44 : 34) * K * e.scale + touch;
   if (e.type === 'bomb') return 30 * K + touch * 0.5;
+  if (e.type === 'killall') return 34 * K + touch;
   return 26 * K + touch;
 }
 
@@ -136,10 +140,30 @@ function drawLooseHat(h) {
   }
 }
 
+function drawKillall(e) {
+  const k = K, pulse = 0.5 + 0.5 * Math.sin(e.age * 8);
+  ctx.save(); ctx.translate(e.x, e.y);
+  ctx.shadowColor = '#ffd24a'; ctx.shadowBlur = (12 + pulse * 10) * k;
+  ctx.fillStyle = '#ffd24a';
+  ctx.beginPath();
+  ctx.moveTo(-32 * k, -22 * k); ctx.lineTo(24 * k, -22 * k);
+  ctx.lineTo(34 * k, -12 * k); ctx.lineTo(34 * k, 22 * k);
+  ctx.lineTo(-24 * k, 22 * k); ctx.lineTo(-34 * k, 12 * k);
+  ctx.closePath(); ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#29220d'; ctx.fillRect(-28 * k, -16 * k, 56 * k, 32 * k);
+  ctx.fillStyle = '#ffd24a'; ctx.font = `800 ${Math.round(12 * k)}px "JetBrains Mono", monospace`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('killall', 0, 0, 52 * k);
+  ctx.fillStyle = '#fff4bd'; ctx.fillRect(-20 * k, 27 * k, 40 * k, 2 * k);
+  ctx.restore();
+}
+
 function drawEnts() {
   for (const e of ents) {
     if (e.type === 'buddy') drawBuddy(e);
     else if (e.type === 'bomb') drawBomb(e);
+    else if (e.type === 'killall') drawKillall(e);
     else drawLooseHat(e);
   }
 }

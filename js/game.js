@@ -23,7 +23,7 @@ function newRun(mode, difficulty = save.difficulty) {
   return {
     mode, difficulty, score: 0, strikes: 0, time: 0, left: 60, d: 0, waveT: 0.9, nextLife: 1000,
     hats: {}, distinct: [], mult: 1, multT: 0, multDur: 1, multName: '',
-    slowT: 0, frenzyT: 0, frenzySpawn: 0, cause: null, lastTick: 10,
+    slowT: 0, frenzyT: 0, frenzySpawn: 0, nextKillall: 20, cause: null, lastTick: 10,
     stats: { sliced: 0, maxCombo: 0, hats: 0, snipes: 0, sets: 0, runways: 0, crits: 0, bombs: 0, missed: 0, legacy: 0 },
   };
 }
@@ -92,8 +92,8 @@ function snipeHat(h, a) {
 }
 
 // ---------- Slicing
-function sliceBuddy(b, a, grp) {
-  if (b.special === 'monolith') return monoHit(b, a);
+function sliceBuddy(b, a, grp, force = false) {
+  if (b.special === 'monolith' && !force) return monoHit(b, a);
   const i = ents.indexOf(b); if (i < 0) return;
   ents.splice(i, 1);
   spawnHalves(b, a);
@@ -104,6 +104,7 @@ function sliceBuddy(b, a, grp) {
   for (const o of ents) if (o.type === 'buddy' && Math.hypot(o.x - b.x, o.y - b.y) < S * 2.2) o.scared = 0.7;
   if (!run || state !== 'play') return;
   run.stats.sliced++;
+  if (b.special === 'monolith') run.stats.legacy++;
   if (Math.random() < 0.05) { run.stats.crits++; addScore(60, b.x, b.y - 20, '#ff4f81', 1.3, 'STACK OVERFLOW '); Sfx.crit(); }
   else addScore(10, b.x, b.y, '#fff');
   if (b.hat) {
@@ -148,6 +149,24 @@ function finalizeGroup(g) {
 }
 
 // ---------- Specials
+function hitKillall(e, a, grp) {
+  const i = ents.indexOf(e);
+  if (i < 0 || !run || state !== 'play') return;
+  ents.splice(i, 1);
+  // Snapshot only visible buddies; hats released by these cuts are not targets.
+  const targets = ents.filter((b) => {
+    if (b.type !== 'buddy' || !b.entered) return false;
+    const r = radiusOf(b);
+    return b.x + r >= 0 && b.x - r <= W && b.y + r >= TOP && b.y - r <= H;
+  });
+  for (const b of targets) sliceBuddy(b, a, grp, true);
+  screenSlash(a);
+  shock(e.x, e.y, '#ffd24a', 3); sparks(e.x, e.y, 40, '#ffd24a', 4);
+  flash(0.25, '#ffd24a'); shake(8); hitstop = Math.max(hitstop, 0.1);
+  banner('killall', `${targets.length} buddies terminated`, '#ffd24a', 1.5);
+  Sfx.killall(); vibrate([20, 30, 40]);
+}
+
 function startBreakpoint(b) {
   run.slowT = 5; targetScale = 0.38;
   banner('BREAKPOINT HIT', 'time is paused-ish · slice everything', '#ff8c3b', 1.5);
@@ -254,6 +273,7 @@ function spawnWave() {
   if (t > 40 && d > 0.2) opts.push(['royal', 0.25]);
   if (t > 12 && !hasSpecial) opts.push(['special', 0.9]);
   if (t > 25 && !hasSpecial) opts.push(['monolith', 0.35]);
+  if (t >= run.nextKillall && !hasSpecial) opts.push(['killall', 0.5]);
   let tot = opts.reduce((a, o) => a + o[1], 0), r = Math.random() * tot, kind = 'single';
   for (const [k, w] of opts) { r -= w; if (r <= 0) { kind = k; break; } }
 
@@ -277,6 +297,12 @@ function spawnWave() {
     case 'royal': spawnBuddy(W / 2, W / 2, 0.2, { hat: 'crown' }); spawnBomb(W / 2 - S * 0.9, W / 2 - S * 1.2, 0.24); spawnBomb(W / 2 + S * 0.9, W / 2 + S * 1.2, 0.24); break;
     case 'special': spawnBuddy(cx, cx + rand(-W * 0.2, W * 0.2), rand(0.15, 0.3), { special: Math.random() < 0.5 ? 'breakpoint' : 'agent', hat: false }); slot(bombP); break;
     case 'monolith': spawnBuddy(W / 2, W / 2, 0.3, { special: 'monolith', vr: 0 }); banner('LEGACY MONOLITH', 'mash it before it ships', '#ff8c3b', 1.3); break;
+    case 'killall':
+      run.nextKillall = t + 20;
+      launch(makeKillall(), cx, cx, 0.22, 1 + 0.25 * d);
+      for (let i = 0; i < 3; i++) spawnBuddy(cx + (i - 1) * S * 0.8, clamp(cx + (i - 1) * S, W * 0.1, W * 0.9), 0.28);
+      popup(cx, H * 0.7, 'SLICE TO TERMINATE ALL', '#ffd24a', 0.8);
+      break;
   }
 }
 
