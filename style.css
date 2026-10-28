@@ -199,7 +199,10 @@ button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent
 .difficulty-options input:checked + span { background: var(--blue); color: #fff; }
 .difficulty-options input:focus-visible + span { outline: 2px solid #fff; outline-offset: -4px; }
 .difficulty-hint { margin: 6px 0 0; text-align: center; font-size: 10px; color: var(--fg); }
-.hint { position: absolute; bottom: calc(var(--sb-h) + 14px); margin: 0; font-size: 11px; color: var(--dim); letter-spacing: .06em; display: flex; gap: 6px; align-items: center; }
+.menu-footer { position: absolute; bottom: calc(var(--sb-h) + 10px); left: calc(12px + var(--sal)); right: calc(12px + var(--sar)); display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.hint { margin: 0; font-size: 11px; color: var(--dim); letter-spacing: .06em; display: flex; gap: 6px; align-items: center; }
+.universe-footer { display: flex; align-items: center; justify-content: center; gap: 7px; color: var(--fg); font-size: 11px; line-height: 16px; text-align: center; }
+.universe-footer svg { flex: none; color: var(--purple); }
 .kbd { display: inline-block; padding: 0 5px; border: 1px solid #555; border-bottom-width: 2px; border-radius: 3px; font-size: 10px; color: var(--fg); line-height: 15px; }
 @media (pointer: coarse) { .hint .kbd, .actions .kbd { display: none; } }
 @media (max-height: 640px) {

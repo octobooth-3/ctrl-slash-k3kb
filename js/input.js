@@ -105,8 +105,7 @@ let menuAmbient = 1.2, menuBusy = false;
 function layoutRings() {
   const portrait = H > W * 1.1;
   const top = $('#difficulty').getBoundingClientRect().bottom + 12;
-  const hint = $('.hint');
-  const bottom = (hint.getClientRects().length ? hint.getBoundingClientRect().top : $('#statusbar').getBoundingClientRect().top) - 12;
+  const bottom = $('.menu-footer').getBoundingClientRect().top - 12;
   const labelH = 28 + clamp(S * 0.17, 13, 22);
   const rows = portrait ? 2 : 1;
   const R = Math.min(0.78 * S, Math.max(24, (bottom - top - rows * labelH - (rows - 1) * 12) / (rows * 2)));
