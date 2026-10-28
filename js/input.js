@@ -95,7 +95,7 @@ function drawTrails() {
 
 // ---------- Menu rings (slice the buddy inside to choose)
 const menuRings = [
-  { id: 'classic', label: 'CLASSIC', sub: '3 strikes · bombs end it', hat: null, color: '#3794ff' },
+  { id: 'classic', label: 'CLASSIC', sub: 'No timer · 3 CI checks (strikes)\nMiss a buddy: lose a check\nNo checks or a sliced bomb: run over\nEvery 1,000 pts: restore 1 lost check', hat: null, color: '#3794ff' },
   { id: 'arcade', label: 'ARCADE', sub: '60 seconds · pure greed', hat: 'propeller-hat', color: '#ffd24a' },
   { id: 'rack', label: 'HAT RACK', sub: 'equip · blades', hat: 'grand-top-hat-monocle', color: '#c586c0' },
 ];
@@ -108,10 +108,12 @@ function layoutRings() {
   const hint = $('.hint');
   const bottom = (hint.getClientRects().length ? hint.getBoundingClientRect().top : $('#statusbar').getBoundingClientRect().top) - 12;
   const labelH = 28 + clamp(S * 0.17, 13, 22);
+  const classicLabelH = labelH + (menuRings[0].sub.split('\n').length - 1) * 14;
   const rows = portrait ? 2 : 1;
-  const R = Math.min(0.78 * S, Math.max(24, (bottom - top - rows * labelH - (rows - 1) * 12) / (rows * 2)));
-  const firstY = clamp(H * (portrait ? 0.52 : 0.62), top + R, bottom - (portrait ? 3 * R + 2 * labelH + 12 : R + labelH));
-  const secondY = portrait ? clamp(H * 0.76, firstY + 2 * R + labelH + 12, bottom - R - labelH) : firstY;
+  const labelsH = classicLabelH + (portrait ? labelH : 0);
+  const R = Math.min(0.78 * S, Math.max(24, (bottom - top - labelsH - (rows - 1) * 12) / (rows * 2)));
+  const firstY = clamp(H * (portrait ? 0.52 : 0.62), top + R, bottom - (portrait ? 3 * R + labelsH + 12 : R + classicLabelH));
+  const secondY = portrait ? clamp(H * 0.76, firstY + 2 * R + classicLabelH + 12, bottom - R - labelH) : firstY;
   const xs = portrait ? [0.5, 0.27, 0.73] : [0.5, 0.24, 0.76];
   menuRings.forEach((r, i) => { r.x = W * xs[i]; r.y = i === 0 ? firstY : secondY; r.R = R; });
   if (portrait && W < 360) { menuRings[1].x = W * 0.25; menuRings[2].x = W * 0.75; }
@@ -168,7 +170,9 @@ function drawMenu(now) {
     ctx.lineWidth = 4; ctx.strokeStyle = '#111'; ctx.strokeText(r.label, 0, R + 16);
     ctx.fillStyle = '#fff'; ctx.fillText(r.label, 0, R + 16);
     ctx.font = `${Math.round(clamp(S * 0.1, 10, 12))}px "JetBrains Mono", monospace`; ctx.fillStyle = '#8b949e';
-    ctx.fillText(r.sub, 0, R + 16 + clamp(S * 0.17, 13, 22));
+    r.sub.split('\n').forEach((line, i) => {
+      ctx.fillText(line, 0, R + 16 + clamp(S * 0.17, 13, 22) + i * 14);
+    });
     ctx.restore();
   }
 }
