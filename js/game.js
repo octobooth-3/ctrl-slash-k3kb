@@ -104,8 +104,9 @@ function sliceBuddy(b, a, grp) {
   for (const o of ents) if (o.type === 'buddy' && Math.hypot(o.x - b.x, o.y - b.y) < S * 2.2) o.scared = 0.7;
   if (!run || state !== 'play') return;
   run.stats.sliced++;
+  const lateCatch = !b.special && !b.frenzy && b.vy > 0;
   if (Math.random() < 0.05) { run.stats.crits++; addScore(60, b.x, b.y - 20, '#ff4f81', 1.3, 'STACK OVERFLOW '); Sfx.crit(); }
-  else addScore(10, b.x, b.y, '#fff');
+  else addScore(lateCatch ? 20 : 10, b.x, b.y, '#fff', 1, lateCatch ? 'LATE BINDING ' : '');
   if (b.hat) {
     const t = HAT[b.hat].tier;
     addScore(TIERS[t].pts, b.x, b.y - 36 * K, TIERS[t].color, 1.1 + t * 0.12);

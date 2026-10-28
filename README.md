@@ -32,7 +32,7 @@ Speed changes how fast buddies and bombs move and how often waves arrive, not th
 
 ## Scoring
 
-A buddy is worth 10 points. Slice 3 or more in one swipe for a combo worth n² × 10, from TRIPLE COMMIT up to SHIPPED TO PROD ON FRIDAY.
+A regular buddy is worth 10 points on the way up, or 20 on the way down (a late binding); a 5% critical hit pays 60 instead. Slice 3 or more in one swipe for a combo worth n² × 10, from TRIPLE COMMIT up to SHIPPED TO PROD ON FRIDAY.
 
 Some buddies wear hats, and hats pay extra:
 
