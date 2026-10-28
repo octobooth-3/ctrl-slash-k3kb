@@ -15,7 +15,7 @@ Built mobile-first for touch, and it works with a mouse too. The gore is pixel g
 
 ## Modes
 
-- **Classic.** You get 3 CI checks. A buddy that falls off screen "escaped to prod" and costs one. Slicing a bomb ends the run. Every 1,000 points restores a check.
+- **Classic.** No timer: survive with 3 CI checks (strikes). Miss a buddy and lose a check; losing all 3 or slicing a bomb ends the run. Each 1,000-point milestone restores one lost check, up to 3.
 - **Arcade.** 60 seconds. Bombs cost 50 points. The last 10 seconds are crunch time.
 
 ## Difficulty
