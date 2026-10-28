@@ -33,7 +33,7 @@ const QUIPS = ['segfault', 'NaN', 'undefined', '404', 'null', 'OOM', 'SIGKILL', 
   'E_BUDDY', 'yeet()', 'free()', 'unlinked', '0xDEAD', 'heap snapshot', 'GC\'d', 'dispose()', 'rm -f', '--force', 'LGTM', 'TODO: grieve'];
 const RIP = ['// rip', '// here lies buddy', '// TODO: unsee', '/* gone */', '// works on my machine', '// @deprecated', '// FIXME', '// git blame me'];
 
-// ---------- Hats (17, straight from the VS Code pet accessory atlases)
+// ---------- Hats (VS Code accessories + original CTRL+SLASH pixel art)
 const TIERS = [
   { name: 'COMMON', pts: 25, color: '#9cdcfe', w: 60 },
   { name: 'RARE', pts: 60, color: '#4ec9b0', w: 28 },
@@ -47,6 +47,10 @@ const HATS = [
   ['firefighter-helmet', 'Firefighter Helmet', 1], ['pink-party-hat', 'Pink Party Hat', 1], ['leaning-party-hat', 'Leaning Party Hat', 1],
   ['propeller-hat', 'Propeller Hat', 2], ['full-size-spinner-hat', 'Spinner Hat', 2], ['wizard-hat', 'Wizard Hat', 2],
   ['crown', 'Crown', 3], ['grand-top-hat-monocle', 'Grand Top Hat & Monocle', 3],
+  ['winter-beanie', 'Winter Beanie', 0], ['bucket-hat', 'Bucket Hat', 0],
+  ['pirate-tricorn', 'Pirate Tricorn', 1], ['aviator-cap', 'Aviator Cap', 1],
+  ['mushroom-cap', 'Mushroom Cap', 2], ['viking-helmet', 'Viking Helmet', 2],
+  ['astronaut-helmet', 'Astronaut Helmet', 3], ['dragon-crown', 'Dragon Crown', 3],
 ].map(([id, name, tier]) => ({ id, name, tier }));
 const HAT = Object.fromEntries(HATS.map((h) => [h.id, h]));
 
@@ -69,6 +73,14 @@ const BLADES = {
   'wizard-hat': { glow: '#a970ff', core: '#f3e8ff', label: 'Arcane' },
   crown: { glow: '#ffd700', core: '#fffbe6', label: 'Royal gold' },
   'grand-top-hat-monocle': { glow: '#c0c0c0', core: '#fff', label: 'Distinguished silver' },
+  'winter-beanie': { glow: '#4ec9b0', core: '#e5fff5', label: 'Frost stitch' },
+  'bucket-hat': { glow: '#c4a46b', core: '#fff3d6', label: 'Trail dust' },
+  'pirate-tricorn': { glow: '#e2ba64', core: '#fff3cc', label: 'Cutlass' },
+  'aviator-cap': { glow: '#d4874b', core: '#d6f4ff', label: 'Sky trail' },
+  'mushroom-cap': { glow: '#f06575', core: '#fff1dc', label: 'Spore print' },
+  'viking-helmet': { glow: '#92abbf', core: '#fff2d6', label: 'Northern steel' },
+  'astronaut-helmet': { glow: '#70d7ed', core: '#f4fcff', label: 'Moonwalk' },
+  'dragon-crown': { glow: '#a5e06b', core: '#f5ffd8', label: 'Dragon fang' },
 };
 
 // ---------- Sprite animations (frame durations mirror chatPetWidget.ts)

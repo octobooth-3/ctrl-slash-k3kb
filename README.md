@@ -1,6 +1,6 @@
 # CTRL+SLASH
 
-A Fruit Ninja-style slicer starring Buddy, the pixel pet from VS Code chat, and all 17 of its hats. Swipe to slice. Don't touch `rm -rf`.
+A Fruit Ninja-style slicer starring Buddy, the pixel pet from VS Code chat, with 25 collectible hats. Swipe to slice. Don't touch `rm -rf`.
 
 > Unofficial fan art. Not made, affiliated with, or endorsed by Microsoft or the VS Code team.
 
@@ -46,6 +46,17 @@ Some buddies wear hats, and hats pay extra:
 
 Hats you slice are saved to the Hat Rack. The equipped hat shows up 3× more often and recolors your blade.
 
+The collection includes the 17 VS Code accessories and eight original pixel-art hats:
+
+| Rarity | New hats |
+|---|---|
+| Common | Winter Beanie, Bucket Hat |
+| Rare | Pirate Tricorn, Aviator Cap |
+| Epic | Mushroom Cap, Viking Helmet |
+| Legendary | Astronaut Helmet, Dragon Crown |
+
+Rarity weights and point values are unchanged. Full Wardrobe still pays out at 17 distinct hats per run; collecting all 25 is optional and does not add another scoring milestone.
+
 ## Special buddies
 
 - **Breakpoint** (red dot) slows time for 5 seconds.
@@ -66,7 +77,9 @@ python3 -m http.server 8000
 
 Then open http://localhost:8000. Pushes to `main` deploy to GitHub Pages through [.github/workflows/pages.yml](.github/workflows/pages.yml).
 
-Run the difficulty regression tests with `node --test tests/difficulty.test.js`.
+Run the regression tests with `node --test tests/*.test.js`.
+
+The original hat artwork is defined on a 24-pixel grid in `scripts/generate-hats.js`. Regenerate its committed PNG atlases with `node scripts/generate-hats.js`; no dependencies are required. The atlases use the existing four-pose, three-layer accessory format.
 
 ## Code
 
@@ -83,6 +96,6 @@ Run the difficulty regression tests with `node --test tests/difficulty.test.js`.
 
 ## License
 
-Code is MIT, see [LICENSE](LICENSE). The Buddy and hat sprites come from [microsoft/vscode](https://github.com/microsoft/vscode) under its MIT license, see [assets/NOTICE.md](assets/NOTICE.md).
+Code and the eight original hat designs are MIT, see [LICENSE](LICENSE). The Buddy and original 17 hat sprites come from [microsoft/vscode](https://github.com/microsoft/vscode) under its MIT license, see [assets/NOTICE.md](assets/NOTICE.md).
 
 CTRL+SLASH is unofficial fan art and not a Microsoft product. "Visual Studio Code" and "VS Code" are trademarks of Microsoft Corporation.

@@ -1,6 +1,6 @@
 # Third-party assets
 
-The PNG sprite sheets in this folder and in `hats/` are unmodified copies of the chat pet ("Buddy") artwork from Visual Studio Code:
+The Buddy PNG sprite sheets in this folder and the original 17 hat atlases in `hats/` are unmodified copies of the chat pet ("Buddy") artwork from Visual Studio Code:
 
 - Source: https://github.com/microsoft/vscode/tree/main/src/vs/workbench/contrib/chat/browser/widget/media/chatPet
 - License: MIT, https://github.com/microsoft/vscode/blob/main/LICENSE.txt
@@ -30,3 +30,9 @@ SOFTWARE.
 ```
 
 "Visual Studio Code" and "VS Code" are trademarks of Microsoft Corporation. CTRL+SLASH is unofficial fan art. It is not made, affiliated with, or endorsed by Microsoft.
+
+## Original CTRL+SLASH artwork
+
+The following hat atlases are original pixel art created for this repository, not Microsoft artwork or external assets: `winter-beanie.png`, `bucket-hat.png`, `pirate-tricorn.png`, `aviator-cap.png`, `mushroom-cap.png`, `viking-helmet.png`, `astronaut-helmet.png`, and `dragon-crown.png`.
+
+Their editable pixel patterns are in `scripts/generate-hats.js`. These designs are distributed under the repository's MIT [license](../LICENSE).
