@@ -10,6 +10,7 @@ const UI = {
     el('hud').hidden = false; el('menu').hidden = true;
     el('timer').hidden = r.mode !== 'arcade'; el('strikes').hidden = r.mode === 'arcade';
     el('best').textContent = fmt(save.best[r.mode] || 0);
+    el('run-difficulty').textContent = DIFFICULTIES[r.difficulty].label.toUpperCase();
     this.score(0, true); this.strikes(0); this.timer(60); this.wardrobe([], null); this.mult(r);
     this.modeName = r.mode === 'arcade' ? 'ARCADE' : 'CLASSIC';
     this.setMode(null);
@@ -59,12 +60,19 @@ const UI = {
   showMenu() {
     el('hud').hidden = true; el('menu').hidden = false; el('over').hidden = true; el('pause').hidden = true;
     this.modeName = ''; this.setMode(null);
+    this.difficulty();
     el('m-best').textContent = fmt(Math.max(save.best.classic || 0, save.best.arcade || 0));
     el('m-hats').textContent = `${discoveredCount()}/17`;
     el('m-equip').innerHTML = save.equipped ? `${hatIco(save.equipped, 24)}<span>${HAT[save.equipped].name}</span>` : '';
     el('sb-problems').textContent = '⊗ 0 ⚠ 0'; el('sb-stats').textContent = 'Ln 1, Col 1';
+    layoutRings();
   },
   hideMenu() { el('menu').hidden = true; },
+  difficulty() {
+    const difficulty = DIFFICULTIES[save.difficulty];
+    el('difficulty').querySelectorAll('input').forEach((input) => { input.checked = input.value === save.difficulty; });
+    el('difficulty-hint').textContent = `${difficulty.speed}× speed · ${Math.round(difficulty.bombStart * 100)}% base bomb chance`;
+  },
 
   // ---------- Hat rack
   openRack() { this.renderRack(); el('rack').hidden = false; prevState = state; state = 'rack'; },
@@ -105,7 +113,7 @@ const UI = {
     el('over-best').textContent = r.newBest ? '★ NEW BEST' : `BEST ${fmt(save.best[r.mode])}`;
     el('over-best').classList.toggle('new', !!r.newBest);
     const stat = (k, v) => `<div>${k}<b>${v}</b></div>`;
-    el('over-stats').innerHTML = [stat('SLICED', s.sliced), stat('BEST COMBO', s.maxCombo), stat('HATS', s.hats), stat('WARDROBE', `${r.distinct.length}/17`),
+    el('over-stats').innerHTML = [stat('DIFFICULTY', DIFFICULTIES[r.difficulty].label.toUpperCase()), stat('SLICED', s.sliced), stat('BEST COMBO', s.maxCombo), stat('HATS', s.hats), stat('WARDROBE', `${r.distinct.length}/17`),
       stat('SNIPES', s.snipes), stat('SETS · RUNWAYS', `${s.sets} · ${s.runways}`), s.legacy ? stat('LEGACY KILLS', s.legacy) : '', s.crits ? stat('STACK OVERFLOWS', s.crits) : ''].join('');
     el('over-hats').innerHTML = r.distinct.map((id) => hatIco(id, 36)).join('');
     el('over').hidden = false;
@@ -139,7 +147,7 @@ function overBuddy(anim) {
 el('btn-pause').addEventListener('click', () => UI.pause());
 el('btn-resume').addEventListener('click', () => UI.resume());
 el('btn-quit').addEventListener('click', () => { el('pause').hidden = true; state = 'play'; run.cause = run.mode === 'arcade' ? 'time' : 'strikes'; gameOver(); });
-el('btn-retry').addEventListener('click', () => { Sfx.unlock(); UI.hideOver(); startRun(run ? run.mode : 'classic'); });
+el('btn-retry').addEventListener('click', () => { Sfx.unlock(); UI.hideOver(); startRun(run ? run.mode : 'classic', run ? run.difficulty : save.difficulty); });
 el('btn-menu').addEventListener('click', () => { UI.hideOver(); enterMenu(); });
 el('rack-close').addEventListener('click', () => UI.closeRack());
 el('rack').addEventListener('click', (e) => { if (e.target.id === 'rack') UI.closeRack(); });
@@ -147,6 +155,10 @@ el('rack-grid').addEventListener('click', (e) => {
   const b = e.target.closest('.hat-card'); if (!b || b.disabled) return;
   const id = b.dataset.id; save.equipped = save.equipped === id ? null : id; persist();
   Sfx.hat(HAT[id].tier); UI.renderRack();
+});
+el('difficulty').addEventListener('change', (e) => {
+  if (state !== 'menu' || !e.target.matches('input[name="difficulty"]')) return;
+  save.difficulty = e.target.value; persist(); UI.difficulty();
 });
 function syncMute() { el('btn-mute').textContent = Sfx.muted ? '♪ off' : '♪ on'; }
 el('btn-mute').addEventListener('click', () => { Sfx.unlock(); Sfx.setMuted(!Sfx.muted); syncMute(); });

@@ -18,6 +18,18 @@ Built mobile-first for touch, and it works with a mouse too. The gore is pixel g
 - **Classic.** You get 3 CI checks. A buddy that falls off screen "escaped to prod" and costs one. Slicing a bomb ends the run. Every 1,000 points restores a check.
 - **Arcade.** 60 seconds. Bombs cost 50 points. The last 10 seconds are crunch time.
 
+## Difficulty
+
+Choose **Easy**, **Medium**, or **Hard** on the menu before picking a game mode. Medium is the default.
+
+| Difficulty | Game speed | Base bomb chance at the start | Base bomb chance at full intensity |
+|---|---|---|---|
+| Easy | 0.8× | 10% | 30% |
+| Medium | 1× (original pace) | 20% | 50% |
+| Hard | 1.25× | 35% | 65% |
+
+Speed changes how fast buddies and bombs move and how often waves arrive, not the Arcade countdown or power-up durations. Bombs can appear from the first wave; individual wave patterns vary the base chance, and intensity still increases over the run. Your choice is saved, applies to both modes, and is kept when retrying.
+
 ## Scoring
 
 A buddy is worth 10 points. Slice 3 or more in one swipe for a combo worth n² × 10, from TRIPLE COMMIT up to SHIPPED TO PROD ON FRIDAY.
@@ -53,6 +65,8 @@ python3 -m http.server 8000
 ```
 
 Then open http://localhost:8000. Pushes to `main` deploy to GitHub Pages through [.github/workflows/pages.yml](.github/workflows/pages.yml).
+
+Run the difficulty regression tests with `node --test tests/difficulty.test.js`.
 
 ## Code
 

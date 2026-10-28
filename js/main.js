@@ -29,8 +29,9 @@ function frame(now) {
   timeScale = lerp(timeScale, targetScale, 1 - Math.exp(-8 * rdt));
   let dt = rdt * timeScale;
   if (hitstop > 0) { hitstop -= rdt; dt = 0; }
+  const gameDt = dt * (run ? DIFFICULTIES[run.difficulty].speed : 1);
   if (!paused) {
-    updateEnts(dt); updateHalves(dt); updateParts(dt); updateDecals(dt); updateOverlays(dt, rdt);
+    updateEnts(gameDt); updateHalves(gameDt); updateParts(dt); updateDecals(dt); updateOverlays(dt, rdt);
     if (state === 'menu' || state === 'rack') updateMenu(rdt);
     updateGame(dt, rdt); tickGroups();
   }
@@ -80,7 +81,7 @@ window.addEventListener('keydown', (e) => {
   else if (state === 'play') { if (k === 'p' || k === 'escape') UI.pause(); }
   else if (state === 'paused') { if (k === 'p' || k === 'escape' || k === 'f5') { e.preventDefault(); UI.resume(); } }
   else if (state === 'over') {
-    if (k === 'r') { UI.hideOver(); startRun(run.mode); }
+    if (k === 'r') { UI.hideOver(); startRun(run.mode, run.difficulty); }
     if (k === 'escape') { UI.hideOver(); enterMenu(); }
   }
 });

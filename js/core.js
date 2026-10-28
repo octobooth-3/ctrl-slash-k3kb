@@ -18,6 +18,12 @@ const isCoarse = matchMedia('(pointer: coarse)').matches;
 const Q = isCoarse ? 0.7 : 1;             // particle quality
 const PCAP = isCoarse ? 600 : 1000;       // particle cap
 
+const DIFFICULTIES = {
+  easy: { label: 'Easy', speed: 0.8, bombStart: 0.1, bombEnd: 0.3 },
+  medium: { label: 'Medium', speed: 1, bombStart: 0.2, bombEnd: 0.5 },
+  hard: { label: 'Hard', speed: 1.25, bombStart: 0.35, bombEnd: 0.65 },
+};
+
 // ---------- Palette
 const BUDDY_PAL = ['#23a8f2', '#23a8f2', '#0077b8', '#004e7c', '#5cc4ff'];
 const SYNTAX = ['#569cd6', '#ce9178', '#dcdcaa', '#4ec9b0', '#b5cea8', '#c586c0', '#9cdcfe', '#d16969', '#ffd700'];
@@ -177,8 +183,15 @@ function bombSprite() {
 // ---------- Persistence
 const SAVE_KEY = 'ctrlslash.v1';
 const save = (() => {
-  const d = { best: { classic: 0, arcade: 0 }, hats: {}, equipped: null, muted: false, plays: 0 };
-  try { const s = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}'); return Object.assign(d, s, { best: Object.assign(d.best, s.best || {}) }); } catch { return d; }
+  const d = { best: { classic: 0, arcade: 0 }, hats: {}, equipped: null, muted: false, plays: 0, difficulty: 'medium' };
+  try {
+    const s = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
+    if (s.difficulty !== undefined && !Object.hasOwn(DIFFICULTIES, s.difficulty)) {
+      console.warn('Unknown saved difficulty; using Medium.');
+      s.difficulty = d.difficulty;
+    }
+    return Object.assign(d, s, { best: Object.assign(d.best, s.best || {}) });
+  } catch { return d; }
 })();
 function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch { /* private mode */ } }
 const discoveredCount = () => HATS.filter((h) => save.hats[h.id]).length;

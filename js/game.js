@@ -19,18 +19,18 @@ const MILESTONES = [
 
 function after(t, fn, real = false) { timers.push({ t, fn, real }); }
 
-function newRun(mode) {
+function newRun(mode, difficulty = save.difficulty) {
   return {
-    mode, score: 0, strikes: 0, time: 0, left: 60, d: 0, waveT: 0.9, nextLife: 1000,
+    mode, difficulty, score: 0, strikes: 0, time: 0, left: 60, d: 0, waveT: 0.9, nextLife: 1000,
     hats: {}, distinct: [], mult: 1, multT: 0, multDur: 1, multName: '',
     slowT: 0, frenzyT: 0, frenzySpawn: 0, cause: null, lastTick: 10,
     stats: { sliced: 0, maxCombo: 0, hats: 0, snipes: 0, sets: 0, runways: 0, crits: 0, bombs: 0, missed: 0, legacy: 0 },
   };
 }
 
-function startRun(mode) {
+function startRun(mode, difficulty = save.difficulty) {
   ents.length = 0; halves.length = 0; timers.length = 0; flyers.length = 0; banners.length = 0;
-  run = newRun(mode);
+  run = newRun(mode, difficulty);
   timeScale = targetScale = 1; hitstop = 0;
   state = 'play';
   UI.startRun(run);
@@ -244,7 +244,8 @@ function slot(bombP) {
 
 function spawnWave() {
   const d = run.d, t = run.time;
-  const bombP = t < 4 ? 0 : lerp(0.2, 0.5, d);
+  const difficulty = DIFFICULTIES[run.difficulty];
+  const bombP = lerp(difficulty.bombStart, difficulty.bombEnd, d);
   const hasSpecial = ents.some((e) => e.special) || run.slowT > 0 || run.frenzyT > 0;
   const opts = [['single', 3], ['spread', 3 + d * 3], ['stagger', 2 + d * 2], ['cluster', 1.5 + d * 2]];
   if (t > 8) opts.push(['barrage', 1 + d * 2]);
@@ -292,7 +293,9 @@ function frenzyTick(dt) {
 }
 
 function updateGame(dt, rdt) {
-  for (let i = timers.length - 1; i >= 0; i--) { const tm = timers[i]; tm.t -= tm.real ? rdt : dt; if (tm.t <= 0) { timers.splice(i, 1); tm.fn(); } }
+  const speed = run ? DIFFICULTIES[run.difficulty].speed : 1;
+  const gameDt = dt * speed;
+  for (let i = timers.length - 1; i >= 0; i--) { const tm = timers[i]; tm.t -= tm.real ? rdt : gameDt; if (tm.t <= 0) { timers.splice(i, 1); tm.fn(); } }
   for (let i = flyers.length - 1; i >= 0; i--) { const f = flyers[i]; f.t += rdt * 1.6; const e = 1 - Math.pow(1 - Math.min(1, f.t), 3); f.x = lerp(f.sx, 34, e); f.y = lerp(f.sy, TOP + 110, e) - Math.sin(e * Math.PI) * 80; if (f.t >= 1) flyers.splice(i, 1); }
 
   // cull off-screen entities; in classic, a missed buddy is a failed CI check
@@ -314,9 +317,9 @@ function updateGame(dt, rdt) {
   }
   if (run.multT > 0) { run.multT -= rdt; if (run.multT <= 0) { run.mult = 1; run.multT = 0; } UI.mult(run); }
   if (run.slowT > 0) { run.slowT -= rdt; if (run.slowT <= 0) { targetScale = 1; Sfx.resume(); UI.setMode(run.frenzyT > 0 ? 'agent' : null); } }
-  if (run.frenzyT > 0) { run.frenzyT -= rdt; frenzyTick(rdt); if (run.frenzyT <= 0) UI.setMode(run.slowT > 0 ? 'debug' : null); }
+  if (run.frenzyT > 0) { run.frenzyT -= rdt; frenzyTick(rdt * speed); if (run.frenzyT <= 0) UI.setMode(run.slowT > 0 ? 'debug' : null); }
 
-  run.waveT -= dt;
+  run.waveT -= gameDt;
   const busy = ents.filter((e) => e.type !== 'hat').length;
   if (run.waveT <= 0 && run.frenzyT <= 0 && busy < 3 + run.d * 5) {
     spawnWave();

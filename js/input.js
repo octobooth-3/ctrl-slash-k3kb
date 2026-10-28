@@ -104,9 +104,16 @@ let menuAmbient = 1.2, menuBusy = false;
 
 function layoutRings() {
   const portrait = H > W * 1.1;
-  const R = 0.78 * S;
-  const pos = portrait ? [[0.5, 0.52], [0.27, 0.76], [0.73, 0.76]] : [[0.5, 0.62], [0.24, 0.62], [0.76, 0.62]];
-  menuRings.forEach((r, i) => { r.x = W * pos[i][0]; r.y = H * pos[i][1]; r.R = R; });
+  const top = $('#difficulty').getBoundingClientRect().bottom + 12;
+  const hint = $('.hint');
+  const bottom = (hint.getClientRects().length ? hint.getBoundingClientRect().top : $('#statusbar').getBoundingClientRect().top) - 12;
+  const labelH = 28 + clamp(S * 0.17, 13, 22);
+  const rows = portrait ? 2 : 1;
+  const R = Math.min(0.78 * S, Math.max(24, (bottom - top - rows * labelH - (rows - 1) * 12) / (rows * 2)));
+  const firstY = clamp(H * (portrait ? 0.52 : 0.62), top + R, bottom - (portrait ? 3 * R + 2 * labelH + 12 : R + labelH));
+  const secondY = portrait ? clamp(H * 0.76, firstY + 2 * R + labelH + 12, bottom - R - labelH) : firstY;
+  const xs = portrait ? [0.5, 0.27, 0.73] : [0.5, 0.24, 0.76];
+  menuRings.forEach((r, i) => { r.x = W * xs[i]; r.y = i === 0 ? firstY : secondY; r.R = R; });
   if (portrait && W < 360) { menuRings[1].x = W * 0.25; menuRings[2].x = W * 0.75; }
 }
 function enterMenu() {
@@ -153,7 +160,7 @@ function drawMenu(now) {
     ctx.globalAlpha = 1;
     if (!r.cut) {
       const s = r.pop > 0 && r.pop < 1 ? 1 - Math.pow(1 - r.pop, 3) + Math.sin(r.pop * Math.PI) * 0.2 : 1;
-      const k = K * 0.95 * s; const bob = Math.sin(now / 400 + r.x) * 4;
+      const k = K * 0.95 * s * (R / (0.78 * S)); const bob = Math.sin(now / 400 + r.x) * 4;
       compose(r.c, 'idle', frameOf(ANIMS.idle, r.t), r.hat, null);
       ctx.drawImage(r.c, -48 * k, -64 * k + bob, 96 * k, 96 * k);
     }
